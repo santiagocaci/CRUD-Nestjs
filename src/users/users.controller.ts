@@ -1,8 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ForbiddenException, Query, HttpException, HttpStatus, ParseIntPipe, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ForbiddenException, Query, HttpException, HttpStatus, ParseIntPipe, Logger, DefaultValuePipe } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ParamMongoId } from './dto/param-mongoid.dto';
+
 
 @Controller('users')
 export class UsersController {
@@ -15,15 +15,15 @@ export class UsersController {
 
   @Get()
   findAll(
-    @Query('skip', ParseIntPipe) skip: number,
-    @Query('limit', ParseIntPipe) limit: number
+    @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
+    @Query('limit', new DefaultValuePipe(0), ParseIntPipe) limit: number
   ) {
     return this.usersService.findAll(limit, skip);
   }
 
 
   @Get(':id')
-  async findOne(@Param('id') id: ParamMongoId) {
+  async findOne(@Param('id') id: string) {
     return await this.usersService.findOne(id)
   }
 

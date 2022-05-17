@@ -1,8 +1,7 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
-import { ParamMongoId } from './dto/param-mongoid.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDocument, User } from './schema/user.schema';
 
@@ -24,8 +23,8 @@ export class UsersService {
     return this.userModel.find().skip(skip).limit(limit);
   }
 
-  async findOne(id: ParamMongoId): Promise<User | HttpException> {
-    const foundUser = await this.userModel.findById(id.id);
+  async findOne(id: string): Promise<User | HttpException> {
+    const foundUser = await this.userModel.findById(id);
     if (!foundUser) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
