@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDocument, User } from './schema/user.schema';
+import { ParamMongoIdDto } from './dto/param-mongoid.dto';
 
 @Injectable()
 export class UsersService {
@@ -23,8 +24,8 @@ export class UsersService {
     return this.userModel.find().skip(skip).limit(limit);
   }
 
-  async findOne(id: string): Promise<User | HttpException> {
-    const foundUser = await this.userModel.findById(id);
+  async findOne(paramMongoId: string): Promise<User | HttpException> {
+    const foundUser = await this.userModel.findById(paramMongoId);
     if (!foundUser) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }

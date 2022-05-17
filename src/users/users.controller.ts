@@ -2,6 +2,8 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ForbiddenException, 
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { ParamMongoIdDto } from './dto/param-mongoid.dto';
+import { ParseObjectIdPipe } from './pipes/parseObjectIdPipe';
 
 
 @Controller('users')
@@ -23,7 +25,7 @@ export class UsersController {
 
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
+  async findOne(@Param('id', ParseObjectIdPipe) id: string) {
     return await this.usersService.findOne(id)
   }
 
