@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDocument, User } from './schema/user.schema';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +16,7 @@ export class UsersService {
     if (userExist) {
       throw new BadRequestException('The email is already registered');
     }
+    createUserDto.password = bcrypt.hashSync(createUserDto.password, 10);
     const createdUser = new this.userModel(createUserDto);
     return createdUser.save();
   }

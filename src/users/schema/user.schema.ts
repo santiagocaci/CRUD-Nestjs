@@ -9,7 +9,7 @@ export class User {
   @Prop({ minlength: 4, required: true })
   username: string;
 
-  @Prop({ minlength: 6, maxlength: 12, required: true })
+  @Prop({ required: true })
   password: string;
 
   @Prop({ unique: true, required: true })
