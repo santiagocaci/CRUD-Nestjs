@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe, DefaultValuePipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe, DefaultValuePipe, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -11,7 +11,12 @@ export class UsersController {
 
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+    const user = this.usersService.create(createUserDto);
+    if (!user) {
+      throw new BadRequestException('The email is already registered');
+    } else {
+      return user;
+    }
   }
 
   @Get()
@@ -24,16 +29,32 @@ export class UsersController {
 
   @Get(':id')
   async findOne(@Param('id', ParseObjectIdPipe) id: string) {
-    return await this.usersService.findOne(id)
+    const user = await this.usersService.findOne(id);
+    
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    } else {
+      return user;
+    }
   }
 
   @Patch(':id')
-  update(@Param('id', ParseObjectIdPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  async update(@Param('id', ParseObjectIdPipe) id: string, @Body() updateUserDto: UpdateUserDto) {
+    const user = await this.usersService.update(id, updateUserDto);
+    if (!user) {
+      throw new BadRequestException(`User not found or Email is already registered`);
+    } else {
+      return user;
+    }
   }
 
   @Delete(':id')
   remove(@Param('id', ParseObjectIdPipe) id: string) {
-    return this.usersService.remove(id);
+    const user = this.usersService.remove(id);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    } else {
+      return user;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -14,7 +14,8 @@ export class UsersService {
   async create(createUserDto: CreateUserDto): Promise<User> {
     const userExist = await this.userModel.findOne({ email: createUserDto.email });
     if (userExist) {
-      throw new BadRequestException('The email is already registered');
+      // throw new BadRequestException('The email is already registered');
+      return null;
     }
     createUserDto.password = bcrypt.hashSync(createUserDto.password, 10);
     const createdUser = new this.userModel(createUserDto);
@@ -25,10 +26,11 @@ export class UsersService {
     return this.userModel.find().skip(skip).limit(limit);
   }
 
-  async findOne(paramMongoId: string): Promise<User | HttpException> {
+  async findOne(paramMongoId: string) {
     const foundUser = await this.userModel.findById(paramMongoId);
     if (!foundUser) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      return null;
+      // throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     return foundUser;
   }
@@ -41,21 +43,27 @@ export class UsersService {
     ]);
 
     if (!user) {
-      throw new BadRequestException('User not found');
+      // throw new BadRequestException('User not found');
+      return null;
     }
 
     if (userWhitEmail && !user._id.equals(userWhitEmail._id)) {
-      throw new BadRequestException(`Email: ${updateUserDto.email} is already registered`);
+      // throw new BadRequestException(`Email: ${updateUserDto.email} is already registered`);
+      return null;
     }
 
     await user.updateOne(updateUserDto);
-    return user.save();
+    await user.save();
+
+    return user;
 
   }
+
   async remove(id: string) {
     const foundUser = await this.userModel.findByIdAndDelete(id);
     if (!foundUser) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      // throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      return null;
     }
     return foundUser;
   }
