@@ -24,12 +24,13 @@ export class UsersController {
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,
     @Query('limit', new DefaultValuePipe(0), ParseIntPipe) limit: number
   ) {
+    
     return this.usersService.findAll(limit, skip);
   }
 
   @Get(':id')
   async findOne(@Param('id', ParseObjectIdPipe) id: string) {
-    const user = await this.usersService.findOne(id);
+    const user = await this.usersService.findOneByMongoId(id);
     
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);

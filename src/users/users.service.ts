@@ -26,13 +26,22 @@ export class UsersService {
     return this.userModel.find().skip(skip).limit(limit);
   }
 
-  async findOne(paramMongoId: string) {
+  async findOneByMongoId(paramMongoId: string) {
     const foundUser = await this.userModel.findById(paramMongoId);
+    
     if (!foundUser) {
       return null;
       // throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
     return foundUser;
+  }
+
+  async findOneByEmail(email: string) {
+    const user = await this.userModel.findOne({ email: email });
+    if (!user) {
+      return null;
+    }
+    return user;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
